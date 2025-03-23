@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multivariable Calculus → Manifolds → Differential Forms</title>
+
+  <!-- 1) vis-network -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+  <!-- 2) MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    /* Make the entire page fill the viewport */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: sans-serif;
+    }
+
+    /* Two columns side by side */
+    #network-container {
+      float: left;
+      width: 70%;      /* 70% left pane for the graph */
+      height: 100%;    /* fill vertical space */
+      border-right: 1px solid #ccc;
+      box-sizing: border-box; /* so padding/border doesn't overflow */
+    }
+
+    #infoPanel {
+      float: left;
+      width: 30%;      /* 30% right pane for text */
+      height: 100%;    
+      box-sizing: border-box;
+      padding: 1em;
+      overflow: auto;  /* scroll if content is tall */
+    }
+
+    #infoPanel h2 {
+      margin-top: 0;
+    }
+
+    .no-selection {
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Left: Network -->
+  <div id="network-container"></div>
+
+  <!-- Right: Info panel -->
+  <div id="infoPanel">
+    <h2>Definition / Statement</h2>
+    <div id="info" class="no-selection">
+      Click on a node to see its proposition or definition here.
+    </div>
+  </div>
+
+  <script>
+    /*********************************************************
+     *  Node definitions with color groups + edges + statements
+     *********************************************************/
+    var nodes = new vis.DataSet([
+      // -- Multivariable Calculus (light orange) --
+      { id: "Partial Derivative", label: "Partial Derivative", color: "#ffc28a" },
+      { id: "Gradient", label: "Gradient", color: "#ffc28a" },
+      { id: "Directional Derivative", label: "Directional Derivative", color: "#ffc28a" },
+      { id: "Jacobian and Total Derivative", label: "Jacobian & Total Derivative", color: "#ffc28a" },
+      { id: "Vector Field (Euclidean)", label: "Vector Field (Euclidean)", color: "#ffc28a" },
+
+      // -- Vector Calculus Theorems (light blue) --
+      { id: "Divergence", label: "Divergence", color: "#bee5eb" },
+      { id: "Curl", label: "Curl", color: "#bee5eb" },
+      { id: "Conservative Vector Field", label: "Conservative Vector Field", color: "#bee5eb" },
+      { id: "Line Integral", label: "Line Integral", color: "#bee5eb" },
+      { id: "Multiple Integral", label: "Multiple Integral", color: "#bee5eb" },
+      { id: "Surface Integral", label: "Surface Integral", color: "#bee5eb" },
+      { id: "Gradient Theorem", label: "Gradient Thm (Line Integrals)", color: "#bee5eb" },
+      { id: "Green's Theorem", label: "Green's Theorem", color: "#bee5eb" },
+      { id: "Stokes' Theorem (Classical)", label: "Stokes' Theorem (Classical)", color: "#bee5eb" },
+      { id: "Divergence Theorem", label: "Divergence Theorem", color: "#bee5eb" },
+
+      // -- Manifold Theory (light pink) --
+      { id: "Topological Manifold", label: "Topological Manifold", color: "#ffd1dc" },
+      { id: "Differentiable Manifold", label: "Differentiable Manifold", color: "#ffd1dc" },
+      { id: "Tangent Space", label: "Tangent Space", color: "#ffd1dc" },
+      { id: "Vector Field (Manifold)", label: "Vector Field (Manifold)", color: "#ffd1dc" },
+
+      // -- Differential Forms (light purple) --
+      { id: "Differential Form", label: "Differential Form", color: "#dcd3ff" },
+      { id: "Exterior Derivative", label: "Exterior Derivative", color: "#dcd3ff" },
+      { id: "Orientation (Manifold)", label: "Orientation (Manifold)", color: "#dcd3ff" },
+      { id: "Integration on Manifolds", label: "Integration on Manifolds", color: "#dcd3ff" },
+      { id: "Generalized Stokes' Theorem", label: "Generalized Stokes' Theorem", color: "#dcd3ff" }
+    ]);
+
+    var edges = new vis.DataSet([
+      // partial -> gradient, ...
+      { from: "Partial Derivative", to: "Gradient" },
+      { from: "Partial Derivative", to: "Directional Derivative" },
+      { from: "Gradient", to: "Directional Derivative" },
+      { from: "Partial Derivative", to: "Jacobian and Total Derivative" },
+
+      // vector fields -> divergence/curl
+      { from: "Vector Field (Euclidean)", to: "Divergence" },
+      { from: "Partial Derivative", to: "Divergence" },
+      { from: "Vector Field (Euclidean)", to: "Curl" },
+      { from: "Partial Derivative", to: "Curl" },
+
+      // conservative fields
+      { from: "Gradient", to: "Conservative Vector Field" },
+      { from: "Curl", to: "Conservative Vector Field" },
+      { from: "Line Integral", to: "Conservative Vector Field" },
+
+      // line integrals, multiple integrals
+      { from: "Vector Field (Euclidean)", to: "Line Integral" },
+      { from: "Partial Derivative", to: "Multiple Integral" },
+      { from: "Multiple Integral", to: "Surface Integral" },
+
+      // fundamental theorem for line integrals
+      { from: "Gradient", to: "Gradient Theorem" },
+      { from: "Conservative Vector Field", to: "Gradient Theorem" },
+      { from: "Line Integral", to: "Gradient Theorem" },
+
+      // Green's Theorem
+      { from: "Line Integral", to: "Green's Theorem" },
+      { from: "Multiple Integral", to: "Green's Theorem" },
+      { from: "Partial Derivative", to: "Green's Theorem" },
+      { from: "Curl", to: "Green's Theorem" },
+
+      // classical Stokes'
+      { from: "Line Integral", to: "Stokes' Theorem (Classical)" },
+      { from: "Surface Integral", to: "Stokes' Theorem (Classical)" },
+      { from: "Curl", to: "Stokes' Theorem (Classical)" },
+
+      // divergence theorem
+      { from: "Multiple Integral", to: "Divergence Theorem" },
+      { from: "Surface Integral", to: "Divergence Theorem" },
+      { from: "Divergence", to: "Divergence Theorem" },
+
+      // manifolds
+      { from: "Topological Manifold", to: "Differentiable Manifold" },
+      { from: "Jacobian and Total Derivative", to: "Differentiable Manifold" },
+      { from: "Differentiable Manifold", to: "Tangent Space" },
+      { from: "Differentiable Manifold", to: "Vector Field (Manifold)" },
+      { from: "Tangent Space", to: "Vector Field (Manifold)" },
+
+      // differential forms
+      { from: "Differentiable Manifold", to: "Differential Form" },
+      { from: "Tangent Space", to: "Differential Form" },
+
+      // exterior derivative
+      { from: "Partial Derivative", to: "Exterior Derivative" },
+      { from: "Differential Form", to: "Exterior Derivative" },
+
+      // orientation
+      { from: "Differentiable Manifold", to: "Orientation (Manifold)" },
+      { from: "Jacobian and Total Derivative", to: "Orientation (Manifold)" },
+
+      // integration on manifolds
+      { from: "Differential Form", to: "Integration on Manifolds" },
+      { from: "Orientation (Manifold)", to: "Integration on Manifolds" },
+
+      // generalized stokes
+      { from: "Integration on Manifolds", to: "Generalized Stokes' Theorem" },
+      { from: "Exterior Derivative", to: "Generalized Stokes' Theorem" }
+    ]);
+
+    // Snippets in LaTeX for each node
+    var nodeProps = {
+      "Partial Derivative": `
+        <p>Definition. Let $f:\\mathbb{R}^n\\to\\mathbb{R}$. 
+        The partial derivative w.r.t. $x_i$ at point $a$ is 
+        $$\\frac{\\partial f}{\\partial x_i}(a) 
+          = \\lim_{h\\to 0} 
+          \\frac{f(a_1,\\dots,a_i+h,\\dots,a_n)-f(a_1,\\dots,a_i,\\dots,a_n)}{h}.$$</p>`,
+      "Gradient": `
+        <p>The gradient of $f(x_1,\\dots,x_n)$ is 
+        $$\\nabla f = \\left(
+          \\frac{\\partial f}{\\partial x_1},\\dots,
+          \\frac{\\partial f}{\\partial x_n}
+        \\right).$$</p>`,
+      "Directional Derivative": `
+        <p>If $f$ is differentiable, then the directional derivative 
+        at $a$ in direction $\\mathbf{u}$ is 
+        $$D_{\\mathbf{u}} f(a) = \\nabla f(a) \\cdot \\mathbf{u}.$$</p>`,
+      "Jacobian and Total Derivative": `
+        <p>The Jacobian of $F:\\mathbb{R}^n\\to\\mathbb{R}^m$ at $a$ is 
+        the $m\\times n$ matrix of partial derivatives. 
+        The total derivative $dF_a$ is the linear map given by this matrix.</p>`,
+      "Vector Field (Euclidean)": `
+        <p>A vector field in $\\mathbb{R}^n$ assigns 
+        $\\mathbf{F}(x)\\in\\mathbb{R}^n$ to each point $x$.
+        E.g. $\\mathbf{F}(x,y,z)=\\langle P,Q,R\\rangle.$</p>`,
+
+      "Divergence": `
+        <p>For $\\mathbf{F}=\\langle P,Q,R\\rangle$, 
+        $$\\nabla\\cdot\\mathbf{F} = P_x + Q_y + R_z.$$
+        Interpreted as 'net outflow' at a point.</p>`,
+      "Curl": `
+        <p>For $\\mathbf{F}=\\langle P,Q,R\\rangle$, 
+        $$\\nabla\\times\\mathbf{F} 
+          = \\Big(\\frac{\\partial R}{\\partial y}-\\frac{\\partial Q}{\\partial z},\\;
+            \\frac{\\partial P}{\\partial z}-\\frac{\\partial R}{\\partial x},\\;
+            \\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\Big).$$</p>`,
+      "Conservative Vector Field": `
+        <p>$\\mathbf{F}$ is conservative if $\\exists\\phi$ with $\\mathbf{F}=\\nabla\\phi.$  
+        Then $\\nabla\\times\\mathbf{F}=\\mathbf{0}$ in a simply‐connected domain.</p>`,
+      "Line Integral": `
+        <p>The line integral of $\\mathbf{F}$ along $C$ parameterized by $\\mathbf{r}(t)$ is 
+        $$\\int_C \\mathbf{F}\\cdot d\\mathbf{r} 
+          = \\int_a^b \\mathbf{F}(\\mathbf{r}(t))\\cdot\\mathbf{r}'(t)\\,dt.$$
+        </p>`,
+      "Multiple Integral": `
+        <p>Double/triple integrals:
+        $$\\iint_D f(x,y)\\,dA,\\quad
+          \\iiint_E g(x,y,z)\\,dV.$$ 
+        Summation of a function over 2D/3D regions.</p>`,
+      "Surface Integral": `
+        <p>Surface integrals over $S$:
+        $$\\iint_S \\mathbf{F}\\cdot d\\mathbf{S} 
+          \\quad\\text{or}\\quad 
+          \\iint_S f\\,dS.$$ 
+        Flux or scalar distribution on a surface.</p>`,
+      "Gradient Theorem": `
+        <p>Fundamental Theorem for Line Integrals:  
+        $$\\int_C \\nabla\\phi\\cdot d\\mathbf{r} = \\phi(B)-\\phi(A).$$ 
+        Implies path independence for conservative fields.</p>`,
+      "Green's Theorem": `
+        <p>Planar region $D$ with boundary $C$ (ccw):
+        $$\\oint_C (P\\,dx + Q\\,dy) 
+          = \\iint_D \\biggl(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\biggr)\\,dA.$$
+        </p>`,
+      "Stokes' Theorem (Classical)": `
+        <p>For a surface $S$ with boundary $\\partial S$:
+        $$\\oint_{\\partial S}\\mathbf{F}\\cdot d\\mathbf{r}
+          = \\iint_S (\\nabla\\times\\mathbf{F})\\cdot d\\mathbf{S}.$$
+        </p>`,
+      "Divergence Theorem": `
+        <p>Gauss's Theorem: 
+        $$\\iiint_V (\\nabla\\cdot\\mathbf{F})\\,dV
+          = \\iint_{\\partial V}\\mathbf{F}\\cdot d\\mathbf{S}.$$
+        </p>`,
+
+      "Topological Manifold": `
+        <p>A topological manifold is locally homeomorphic to $\\mathbb{R}^n$, 
+        Hausdorff, and second countable.</p>`,
+      "Differentiable Manifold": `
+        <p>A topological manifold with a $C^k$ atlas whose transition maps 
+        are $C^k$. Allows doing calculus on $M$ in local coordinates.</p>`,
+      "Tangent Space": `
+        <p>$T_pM$ is the space of velocity vectors of curves through $p$. 
+        Dimension $=\\dim(M)$. 
+        A basis is $\\left\\{\\frac{\\partial}{\\partial x^i}\\bigg\\vert_p\\right\\}.$</p>`,
+      "Vector Field (Manifold)": `
+        <p>A vector field on $M$ is a smooth choice of a vector in $T_pM$ 
+        at each $p\\in M$.  Equivalently, a section of $TM$.</p>`,
+
+      "Differential Form": `
+        <p>A $k$‐form $\\omega$ is a smooth, alternating $k$‐linear functional 
+        on tangent vectors. E.g. 1‐forms are covector fields, wedge products 
+        build higher‐degree forms.</p>`,
+      "Exterior Derivative": `
+        <p>$d$ is a graded derivation on forms: 
+        $$d: \\Omega^k(M)\\to\\Omega^{k+1}(M)\\quad\\text{with}\\quad d^2=0.$$
+        Generalizes $df$, curl, and divergence to all dimensions.</p>`,
+      "Orientation (Manifold)": `
+        <p>An orientation is a consistent choice of 'handedness' in the tangent spaces, 
+        often given by a nowhere-zero top‐dimensional form. 
+        Ensures integrals have consistent sign.</p>`,
+      "Integration on Manifolds": `
+        <p>For an oriented $n$‐manifold, we integrate an $n$‐form $\\omega$ by 
+        pulling back to coordinates and summing over charts.  
+        Recovers line/surface/volume integrals in $\\mathbb{R}^n$.</p>`,
+      "Generalized Stokes' Theorem": `
+        <p>On an oriented $n$‐manifold $M$ with boundary $\\partial M$,
+        $$\\int_M d\\omega = \\int_{\\partial M}\\omega.$$
+        Unifies FTC, Green, Stokes (classical), Divergence Theorem, etc.</p>`
+    };
+
+    /*********************************************************
+     *  Create the network
+     *********************************************************/
+    var container = document.getElementById('network-container');
+    var data = { nodes: nodes, edges: edges };
+    var options = {
+      physics: {
+        enabled: true,
+        solver: 'forceAtlas2Based',
+        forceAtlas2Based: {
+          gravitationalConstant: -50
+        },
+        stabilization: { iterations: 150 }
+      },
+      interaction: {
+        hover: true,
+        dragNodes: true,
+        zoomView: true,
+        dragView: true
+      },
+      edges: {
+        arrows: {
+          to: { enabled: true, scaleFactor: 0.8 }
+        },
+        smooth: { type: "dynamic" }
+      },
+      nodes: {
+        shape: "box",
+        margin: 10,
+        widthConstraint: { maximum: 250 },
+        font: { face: "verdana", size: 12 }
+      }
+    };
+
+    var network = new vis.Network(container, data, options);
+
+    // Once stabilized, automatically fit the view so nodes are visible
+    network.once("stabilizationIterationsDone", function () {
+      network.fit({ animation: true });
+    });
+
+    /*********************************************************
+     *  On node click: show the LaTeX snippet, re-typeset
+     *********************************************************/
+    network.on("click", function(params) {
+      var infoDiv = document.getElementById('info');
+      if (params.nodes.length > 0) {
+        var nodeId = params.nodes[0];
+        var latexText = nodeProps[nodeId] || "<p>No definition found.</p>";
+        infoDiv.innerHTML = latexText;
+        infoDiv.classList.remove("no-selection");
+      } else {
+        infoDiv.innerHTML = "Click on a node to see its proposition or definition here.";
+        infoDiv.classList.add("no-selection");
+      }
+
+      // Refresh MathJax rendering
+      MathJax.typesetPromise();
+    });
+  </script>
+</body>
+</html>

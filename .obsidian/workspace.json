@@ -1,0 +1,316 @@
+{
+  "main": {
+    "id": "20f36ea098b7af44",
+    "type": "split",
+    "children": [
+      {
+        "id": "7bf1c6df5f92343c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c12ed0fefca8c57b",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7c74af73737d4ba4",
+    "type": "split",
+    "children": [
+      {
+        "id": "b36028efe2a8dc98",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b93bf3c0685effbd",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "decd91dfebd2b287",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "6a28f68dcb41c9c4",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 584.5
+  },
+  "right": {
+    "id": "8dd0a833e94fb969",
+    "type": "split",
+    "children": [
+      {
+        "id": "b688fd158ff444ab",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3255194d335f135d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "6d55765e14ec5f92",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "a2f3ca3bff3093ab",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "4789a589936be232",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          },
+          {
+            "id": "08f75ed367bab9fc",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "b2769cdb1342deb4",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "cc61c6d762a1cd47",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "ec34e695658e71f4",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "06e82abac1e1aaa0",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "2c74b511b4970ef5",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "de04a39acea191a1",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "b0f8f9a9089b4fc0",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "a1e5b149ab87629c",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          },
+          {
+            "id": "03c00da2a0cec062",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          },
+          {
+            "id": "6058230d39da3ed3",
+            "type": "leaf",
+            "state": {
+              "type": "graph-analysis",
+              "state": {},
+              "icon": "GA-ICON",
+              "title": "Graph Analysis"
+            }
+          }
+        ],
+        "currentTab": 14
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "3d-graph:3D Graph": false,
+      "tldraw:Create new tldrawing": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "6058230d39da3ed3",
+  "lastOpenFiles": [
+    "mt/mt-charts-atlases.md",
+    "Untitled",
+    "Ink/Writing/2025.3.23 - 7.00am.writing",
+    "exercises/Untitled.md",
+    "Ink/Writing",
+    "Ink",
+    "exercises/1.md",
+    "exercises/Untitled.canvas",
+    "exercises",
+    "math-dependency-graph.html",
+    "manifold_graph.html",
+    "math-dependency-graph (2).html",
+    "mt/mt-continuity.md",
+    "mt/mt-homeomorphisms.md",
+    "mt/mt-immersions-embeddings.md",
+    "mc/mc-green-theorem.md",
+    "df/df-exterior-derivative.md",
+    "df/df-de-rham-cohomology.md",
+    "df/df-wedge-product.md",
+    "mt/mt-tangent-spaces.md",
+    "mc/mc-directional-derivatives.md",
+    "mc/mc-partial-derivatives.md",
+    "mc-chain-rule.md",
+    "mc/mc-chain-rule.md",
+    "df/df-k-forms.md",
+    "df/df-curvature.md",
+    "df/df-connections.md",
+    "df/df-lie-derivatives.md",
+    "df/df-generalized-stokes-theorem.md",
+    "df/df-integration-of-forms.md",
+    "df/df-hodge-star.md",
+    "df/df-pullbacks.md",
+    "df/df-1-forms.md",
+    "df/df-alternating-products.md",
+    "df",
+    "mt"
+  ]
+}

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematics Dependency Graph - Improved Layout</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .subtitle {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        
+        .graph-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .graph-container {
+                flex-direction: row;
+            }
+        }
+        
+        .svg-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 3;
+            overflow: hidden;
+        }
+        
+        .info-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-height: 200px;
+        }
+        
+        .info-title {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .info-group {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .info-description {
+            line-height: 1.5;
+            color: #666;
+        }
+        
+        .instructions {
+            margin-top: 10px;
+            color: #777;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        /* Styles for arrows */
+        .arrow {
+            fill: #999;
+        }
+        
+        .arrow-adjacent {
+            fill: #A66FFF;
+        }
+        
+        .arrow-distant {
+            fill: #FF6F6F;
+        }
+        
+        /* Node highlight on hover */
+        .node:hover circle {
+            stroke: #333;
+            stroke-width: 2px;
+        }
+        
+        /* Improved legend */
+        .legend-box {
+            fill: white;
+            stroke: #ddd;
+            stroke-width: 1px;
+            rx: 5;
+            ry: 5;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mathematics Dependency Graph</h1>
+        <p class="subtitle">From Multivariable Calculus to Manifold Theory to Differential Forms</p>
+        
+        <div class="controls">
+            <button id="btn-center">Center View</button>
+            <button id="btn-spread">Spread Nodes</button>
+            <button id="btn-group">Group by Field</button>
+            <button id="btn-reset">Reset Layout</button>
+            <button id="btn-toggle-labels">Toggle Labels</button>
+        </div>
+        
+        <div class="graph-container">
+            <div class="svg-container" id="graph-svg-container">
+                <!-- SVG will be inserted here -->
+            </div>
+            
+            <div class="info-panel" id="info-panel">
+                <h3 class="info-title">Select a concept</h3>
+                <p class="info-description">Click on a node in the graph to view details about each mathematical concept.</p>
+            </div>
+        </div>
+        
+        <p class="instructions">Click on a node to view details. Drag nodes to rearrange. Use mouse wheel to zoom, drag background to pan.</p>
+    </div>
+    
+    <script>
+        // Define data
+        const data = {
+            nodes: [
+                // Multivariable Calculus
+                { id: "mvectors", name: "Vectors in ℝⁿ", group: 1, description: "Fundamental objects in multivariable calculus representing magnitude and direction." },
+                { id: "mpartial", name: "Partial Derivatives", group: 1, description: "Derivatives with respect to one variable while holding others constant." },
+                { id: "mgradient", name: "Gradient", group: 1, description: "Vector field that points in the direction of greatest rate of increase of a function." },
+                { id: "mdirectional", name: "Directional Derivatives", group: 1, description: "Rate of change of a function in any direction, generalizing partial derivatives." },
+                { id: "mjacobian", name: "Jacobian Matrix", group: 1, description: "Matrix of all first-order partial derivatives of a vector-valued function." },
+                { id: "mmultiple", name: "Multiple Integrals", group: 1, description: "Generalization of the definite integral to functions of more than one variable." },
+                { id: "mchange", name: "Change of Variables", group: 1, description: "Technique for evaluating multiple integrals using coordinate transformations." },
+                { id: "mvfield", name: "Vector Fields", group: 1, description: "Assignment of a vector to each point in a subset of Euclidean space." },
+                { id: "mline", name: "Line Integrals", group: 1, description: "Integral of a function along a curve in a scalar or vector field." },
+                { id: "msurface", name: "Surface Integrals", group: 1, description: "Integral of a function over a surface in a scalar or vector field." },
+                { id: "mdiv", name: "Divergence", group: 1, description: "Scalar field measuring the volume density of the outward flux of a vector field." },
+                { id: "mcurl", name: "Curl", group: 1, description: "Vector field measuring the rotation of a vector field." },
+                { id: "mgreen", name: "Green's Theorem", group: 1, description: "Relates a line integral around a simple closed curve to a double integral over the region it encloses." },
+                { id: "mstokes", name: "Stokes' Theorem", group: 1, description: "Relates the surface integral of the curl to the line integral around the boundary." },
+                { id: "mdivergence", name: "Divergence Theorem", group: 1, description: "Relates the flux through a closed surface to the triple integral of the divergence." },
+                
+                // Manifold Theory
+                { id: "tmetric", name: "Metric Spaces", group: 2, description: "Sets equipped with a notion of distance between elements." },
+                { id: "ttopology", name: "Topology", group: 2, description: "Study of properties preserved under continuous deformations." },
+                { id: "topen", name: "Open Sets", group: 2, description: "Sets that don't contain their boundary points; fundamental to topology." },
+                { id: "tcontinuity", name: "Continuity", group: 2, description: "Functions that preserve closeness between points." },
+                { id: "thomeomorphism", name: "Homeomorphisms", group: 2, description: "Continuous bijections with continuous inverses, preserving topological properties." },
+                { id: "tmanifold", name: "Manifolds", group: 2, description: "Topological spaces that locally resemble Euclidean space." },
+                { id: "tcharts", name: "Charts & Atlases", group: 2, description: "Maps from manifold patches to Euclidean space; collections of compatible charts." },
+                { id: "tsmooth", name: "Smooth Manifolds", group: 2, description: "Manifolds where transitions between charts are infinitely differentiable." },
+                { id: "ttangent", name: "Tangent Spaces", group: 2, description: "Vector spaces of possible directions of curves passing through a point." },
+                { id: "ttangentbundle", name: "Tangent Bundle", group: 2, description: "Union of all tangent spaces of a manifold, forming a manifold itself." },
+                { id: "tsubmanifold", name: "Submanifolds", group: 2, description: "Manifolds that are subsets of other manifolds." },
+                { id: "timmersion", name: "Immersions & Embeddings", group: 2, description: "Maps between manifolds that preserve local or global structure." },
+                { id: "tliegroups", name: "Lie Groups", group: 2, description: "Groups that are also differentiable manifolds, with smooth group operations." },
+                { id: "tpartition", name: "Partition of Unity", group: 2, description: "Collection of functions allowing global constructions from local definitions." },
+                
+                // Differential Forms
+                { id: "dlinear", name: "Linear Algebra", group: 3, description: "Study of vector spaces and linear mappings between them." },
+                { id: "dtensor", name: "Tensor Products", group: 3, description: "Construction creating vector spaces from other vector spaces." },
+                { id: "ddualspace", name: "Dual Space", group: 3, description: "Vector space of linear functionals on the original vector space." },
+                { id: "daltproduct", name: "Alternating Products", group: 3, description: "Construction creating antisymmetric multilinear forms." },
+                { id: "d1forms", name: "1-Forms", group: 3, description: "Covectors or linear functionals that measure objects in tangent spaces." },
+                { id: "dkforms", name: "k-Forms", group: 3, description: "Antisymmetric tensor fields of rank k that can be integrated over k-dimensional surfaces." },
+                { id: "dwedge", name: "Wedge Product", group: 3, description: "Operation combining differential forms of different degrees." },
+                { id: "dexterior", name: "Exterior Derivative", group: 3, description: "Operator generalizing the gradient, curl, and divergence operations." },
+                { id: "dpullback", name: "Pullbacks", group: 3, description: "Way to transfer differential forms from one manifold to another." },
+                { id: "dhodge", name: "Hodge Star", group: 3, description: "Operator mapping k-forms to (n-k)-forms using a metric." },
+                { id: "dderham", name: "de Rham Cohomology", group: 3, description: "Algebraic structure capturing the topology of differential forms." },
+                { id: "dint", name: "Integration of Forms", group: 3, description: "Process of evaluating differential forms over manifolds." },
+                { id: "dstokesgen", name: "Generalized Stokes' Theorem", group: 3, description: "Relates integration of a form over a manifold to integration over its boundary." },
+                { id: "dliederiv", name: "Lie Derivatives", group: 3, description: "Describes how tensor fields change along the flow of a vector field." },
+                { id: "dconnection", name: "Connections", group: 3, description: "Allows comparison of vectors in different tangent spaces." },
+                { id: "dcurvature", name: "Curvature", group: 3, description: "Measures the local deviation of a manifold from being flat." },
+            ],
+            
+            links: [
+                // Internal links within Multivariable Calculus
+                { source: "mvectors", target: "mpartial", value: 1 },
+                { source: "mpartial", target: "mgradient", value: 1 },
+                { source: "mpartial", target: "mdirectional", value: 1 },
+                { source: "mgradient", target: "mdirectional", value: 1 },
+                { source: "mpartial", target: "mjacobian", value: 1 },
+                { source: "mvectors", target: "mmultiple", value: 1 },
+                { source: "mmultiple", target: "mchange", value: 1 },
+                { source: "mvectors", target: "mvfield", value: 1 },
+                { source: "mvfield", target: "mline", value: 1 },
+                { source: "mvfield", target: "msurface", value: 1 },
+                { source: "mvfield", target: "mdiv", value: 1 },
+                { source: "mvfield", target: "mcurl", value: 1 },
+                { source: "mline", target: "mgreen", value: 1 },
+                { source: "msurface", target: "mstokes", value: 1 },
+                { source: "mdiv", target: "mdivergence", value: 1 },
+                { source: "mcurl", target: "mstokes", value: 1 },
+                
+                // Internal links within Manifold Theory
+                { source: "tmetric", target: "ttopology", value: 1 },
+                { source: "ttopology", target: "topen", value: 1 },
+                { source: "topen", target: "tcontinuity", value: 1 },
+                { source: "tcontinuity", target: "thomeomorphism", value: 1 },
+                { source: "ttopology", target: "tmanifold", value: 1 },
+                { source: "tmanifold", target: "tcharts", value: 1 },
+                { source: "tcharts", target: "tsmooth", value: 1 },
+                { source: "tsmooth", target: "ttangent", value: 1 },
+                { source: "ttangent", target: "ttangentbundle", value: 1 },
+                { source: "tmanifold", target: "tsubmanifold", value: 1 },
+                { source: "tsubmanifold", target: "timmersion", value: 1 },
+                { source: "tsmooth", target: "tliegroups", value: 1 },
+                { source: "tcharts", target: "tpartition", value: 1 },
+                
+                // Internal links within Differential Forms
+                { source: "dlinear", target: "dtensor", value: 1 },
+                { source: "dlinear", target: "ddualspace", value: 1 },
+                { source: "dtensor", target: "daltproduct", value: 1 },
+                { source: "ddualspace", target: "d1forms", value: 1 },
+                { source: "daltproduct", target: "dkforms", value: 1 },
+                { source: "d1forms", target: "dkforms", value: 1 },
+                { source: "dkforms", target: "dwedge", value: 1 },
+                { source: "dkforms", target: "dexterior", value: 1 },
+                { source: "dkforms", target: "dpullback", value: 1 },
+                { source: "dkforms", target: "dhodge", value: 1 },
+                { source: "dexterior", target: "dderham", value: 1 },
+                { source: "dkforms", target: "dint", value: 1 },
+                { source: "dexterior", target: "dstokesgen", value: 1 },
+                { source: "dint", target: "dstokesgen", value: 1 },
+                { source: "dkforms", target: "dliederiv", value: 1 },
+                { source: "ttangentbundle", target: "dconnection", value: 1 },
+                { source: "dconnection", target: "dcurvature", value: 1 },
+                
+                // Connections between Multivariable Calculus and Manifold Theory
+                { source: "mvectors", target: "tmetric", value: 2 },
+                { source: "mpartial", target: "ttangent", value: 2 },
+                { source: "mgradient", target: "ttangent", value: 2 },
+                { source: "mdirectional", target: "ttangent", value: 2 },
+                { source: "mjacobian", target: "timmersion", value: 2 },
+                { source: "mchange", target: "tcharts", value: 2 },
+                { source: "mvfield", target: "ttangent", value: 2 },
+                { source: "mline", target: "tsubmanifold", value: 2 },
+                { source: "msurface", target: "tsubmanifold", value: 2 },
+                
+                // Connections between Manifold Theory and Differential Forms
+                { source: "ttangent", target: "d1forms", value: 2 },
+                { source: "ttangentbundle", target: "dkforms", value: 2 },
+                { source: "tsmooth", target: "dkforms", value: 2 },
+                { source: "timmersion", target: "dpullback", value: 2 },
+                { source: "tmanifold", target: "dint", value: 2 },
+                { source: "tliegroups", target: "dliederiv", value: 2 },
+                
+                // Connections between Multivariable Calculus and Differential Forms
+                { source: "mline", target: "d1forms", value: 3 },
+                { source: "msurface", target: "dkforms", value: 3 },
+                { source: "mdiv", target: "dexterior", value: 3 },
+                { source: "mcurl", target: "dexterior", value: 3 },
+                { source: "mgreen", target: "dstokesgen", value: 3 },
+                { source: "mstokes", target: "dstokesgen", value: 3 },
+                { source: "mdivergence", target: "dstokesgen", value: 3 }
+            ]
+        };
+
+        // Initialize the visualization
+        function createVisualization() {
+            // Constants
+            const width = 900;
+            const height = 700;
+            const nodeRadius = 8;
+            
+            // Create SVG with zoom support
+            const svg = d3.create("svg")
+                .attr("viewBox", [0, 0, width, height])
+                .attr("width", "100%")
+                .attr("height", "100%");
+            
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.2, 5])
+                .on("zoom", (event) => {
+                    g.attr("transform", event.transform);
+                });
+            
+            svg.call(zoom);
+            
+            // Main container group for zooming
+            const g = svg.append("g");
+            
+            // Arrow markers for directed edges
+            svg.append("defs").selectAll("marker")
+                .data(["end", "end-adjacent", "end-distant"])
+                .enter().append("marker")
+                .attr("id", d => d)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 27)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5")
+                .attr("class", d => {
+                    if (d === "end") return "arrow";
+                    if (d === "end-adjacent") return "arrow-adjacent";
+                    return "arrow-distant";
+                });
+            
+            // Define group colors
+            const color = d3.scaleOrdinal()
+                .domain([1, 2, 3])
+                .range(["#1f77b4", "#2ca02c", "#d62728"]);
+            
+            // Create links with proper markers
+            const link = g.append("g")
+                .attr("stroke-opacity", 0.6)
+                .selectAll("path")
+                .data(data.links)
+                .join("path")
+                .attr("stroke", d => {
+                    if (d.value === 1) return "#999";         // Internal links
+                    if (d.value === 2) return "#A66FFF";      // Adjacent field links
+                    return "#FF6F6F";                         // Distant field links
+                })
+                .attr("stroke-width", d => Math.sqrt(d.value) * 1.2)
+                .attr("marker-end", d => {
+                    if (d.value === 1) return "url(#end)";
+                    if (d.value === 2) return "url(#end-adjacent)";
+                    return "url(#end-distant)";
+                })
+                .attr("fill", "none");
+            
+            // Create node groups
+            const node = g.append("g")
+                .selectAll(".node")
+                .data(data.nodes)
+                .join("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+            
+            // Add circles for nodes
+            node.append("circle")
+                .attr("r", nodeRadius)
+                .attr("fill", d => color(d.group))
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 1.5)
+                .style("cursor", "pointer")
+                .on("click", (event, d) => {
+                    updateInfoPanel(d);
+                    // Highlight connected nodes
+                    highlightConnections(d);
+                });
+            
+            // Add text labels
+            const labels = node.append("text")
+                .attr("dx", 12)
+                .attr("dy", ".35em")
+                .text(d => d.name)
+                .style("font-size", "12px")
+                .style("font-family", "Arial")
+                .style("pointer-events", "none");
+            
+            // Create an improved legend with background - now with drag functionality
+            const legendWidth = 180;
+            const legendHeight = 210;
+            const legendX = width - legendWidth - 10;
+            const legendY = 20;
+            
+            // Create a group for the entire legend that will be draggable
+            const legendGroup = g.append("g")
+                .attr("transform", `translate(${legendX}, ${legendY})`)
+                .attr("cursor", "move")
+                .call(d3.drag()
+                    .on("start", legendDragStarted)
+                    .on("drag", legendDragged)
+                    .on("end", legendDragEnded));
+            
+            // Legend background
+            legendGroup.append("rect")
+                .attr("class", "legend-box")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", legendWidth)
+                .attr("height", legendHeight)
+                .attr("opacity", 0.9);
+            
+            const legend = legendGroup.append("g")
+                .attr("transform", `translate(10, 20)`);
+                
+            // Add a subtle handle to indicate draggability
+            legendGroup.append("text")
+                .attr("x", legendWidth - 20)
+                .attr("y", 15)
+                .text("⋮⋮")
+                .attr("font-size", "14px")
+                .attr("fill", "#666")
+                .attr("text-anchor", "middle");
+            
+            // Legend drag handlers
+            function legendDragStarted(event) {
+                legendGroup.raise(); // Bring to front during drag
+                legendGroup.attr("opacity", 0.8); // Visual feedback
+            }
+            
+            function legendDragged(event) {
+                // Get the current transform and update with the drag delta
+                const transform = legendGroup.attr("transform");
+                const translate = transform.match(/translate\(([^)]+)\)/)[1].split(",");
+                const x = parseFloat(translate[0]) + event.dx;
+                const y = parseFloat(translate[1]) + event.dy;
+                legendGroup.attr("transform", `translate(${x}, ${y})`);
+            }
+            
+            function legendDragEnded() {
+                legendGroup.attr("opacity", 1); // Restore opacity
+            }
+            
+            // Legend title
+            legend.append("text")
+                .attr("class", "legend-title")
+                .attr("x", 0)
+                .attr("y", -5)
+                .text("Legend");
+                
+            // Add a subtle "Drag me" indicator that fades after a few seconds
+            legend.append("text")
+                .attr("x", 70)
+                .attr("y", -5)
+                .text("(drag to move)")
+                .attr("font-size", "10px")
+                .attr("fill", "#666")
+                .attr("opacity", 1)
+                .transition()
+                .duration(5000)
+                .attr("opacity", 0);
+            
+            // Subject areas
+            const areas = [
+                { name: "Multivariable Calculus", color: color(1) },
+                { name: "Manifold Theory", color: color(2) },
+                { name: "Differential Forms", color: color(3) }
+            ];
+            
+            areas.forEach((area, i) => {
+                const legendRow = legend.append("g")
+                    .attr("transform", `translate(0, ${i * 25 + 15})`);
+                
+                legendRow.append("rect")
+                    .attr("width", 12)
+                    .attr("height", 12)
+                    .attr("fill", area.color);
+                
+                legendRow.append("text")
+                    .attr("x", 20)
+                    .attr("y", 10)
+                    .text(area.name)
+                    .style("font-size", "12px");
+            });
+            
+            // Connection types
+            const connections = [
+                { name: "Internal Connection", color: "#999", value: 1 },
+                { name: "Adjacent Field Connection", color: "#A66FFF", value: 2 },
+                { name: "Distant Field Connection", color: "#FF6F6F", value: 3 }
+            ];
+            
+            connections.forEach((conn, i) => {
+                const legendRow = legend.append("g")
+                    .attr("transform", `translate(0, ${(i * 25) + (areas.length * 25) + 25})`);
+                
+                legendRow.append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 6)
+                    .attr("x2", 12)
+                    .attr("y2", 6)
+                    .attr("stroke", conn.color)
+                    .attr("stroke-width", Math.sqrt(conn.value) * 1.5)
+                    .attr("marker-end", i === 0 ? "url(#end)" : (i === 1 ? "url(#end-adjacent)" : "url(#end-distant)"));
+                
+                legendRow.append("text")
+                    .attr("x", 20)
+                    .attr("y", 10)
+                    .text(conn.name)
+                    .style("font-size", "12px");
+            });
+            
+            // Set up the D3 force simulation with improved layout
+            const simulation = d3.forceSimulation(data.nodes)
+                // Standard link force with higher strength for better structure
+                .force("link", d3.forceLink(data.links)
+                    .id(d => d.id)
+                    .distance(d => 100 + (d.value === 1 ? 0 : (d.value === 2 ? 50 : 100)))
+                    .strength(d => 1 / Math.min(count(d.source), count(d.target)))
+                )
+                // Repulsive force between nodes
+                .force("charge", d3.forceManyBody()
+                    .strength(-300)
+                    .distanceMax(300)
+                )
+                // Center force to keep the graph centered
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                // X-positioning force with strength by group
+                .force("x", d3.forceX(d => {
+                    // Position nodes by their group
+                    if (d.group === 1) return width * 0.25;
+                    if (d.group === 2) return width * 0.5;
+                    return width * 0.75;
+                }).strength(0.1))
+                // Y-positioning to avoid overlap
+                .force("y", d3.forceY(height / 2).strength(0.05))
+                // Collision force to prevent overlap
+                .force("collision", d3.forceCollide().radius(nodeRadius * 2));
+            
+            // Helper function to count links connected to a node
+            function count(node) {
+                return data.links.filter(link => (link.source === node || link.target === node)).length;
+            }
+            
+            // Calculate path for curved links
+            function linkArc(d) {
+                const dx = d.target.x - d.source.x;
+                const dy = d.target.y - d.source.y;
+                const dr = Math.sqrt(dx * dx + dy * dy) * 1.5;
+                
+                // Make the link slightly curved
+                return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            }
+            
+            // Update positions on each tick of the simulation
+            simulation.on("tick", () => {
+                link.attr("d", linkArc);
+                
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+            
+            // Drag functions
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+            
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                // Keep node fixed if user has dragged it
+                // d.fx = null;
+                // d.fy = null;
+            }
+            
+            // Function to update info panel
+            function updateInfoPanel(node) {
+                const infoPanel = document.getElementById('info-panel');
+                
+                // Get group name
+                let groupName = "";
+                if (node.group === 1) groupName = "Multivariable Calculus";
+                else if (node.group === 2) groupName = "Manifold Theory";
+                else groupName = "Differential Forms";
+                
+                infoPanel.innerHTML = `
+                    <h3 class="info-title">${node.name}</h3>
+                    <p class="info-group">Group: ${groupName}</p>
+                    <p class="info-description">${node.description}</p>
+                `;
+            }
+            
+            // Function to highlight connections of a selected node
+            function highlightConnections(selectedNode) {
+                // Reset all nodes and links
+                node.selectAll("circle")
+                    .attr("r", nodeRadius)
+                    .attr("opacity", 0.7);
+                
+                link.attr("opacity", 0.2);
+                
+                // Get connected nodes
+                const connectedNodeIds = new Set();
+                data.links.forEach(l => {
+                    if (l.source.id === selectedNode.id || l.source === selectedNode.id) {
+                        connectedNodeIds.add(l.target.id || l.target);
+                    }
+                    if (l.target.id === selectedNode.id || l.target === selectedNode.id) {
+                        connectedNodeIds.add(l.source.id || l.source);
+                    }
+                });
+                
+                // Highlight the selected node
+                node.filter(d => d.id === selectedNode.id)
+                    .selectAll("circle")
+                    .attr("r", nodeRadius * 1.5)
+                    .attr("opacity", 1)
+                    .attr("stroke", "#333")
+                    .attr("stroke-width", 2);
+                
+                // Highlight connected nodes
+                node.filter(d => connectedNodeIds.has(d.id))
+                    .selectAll("circle")
+                    .attr("opacity", 1)
+                    .attr("stroke", "#555");
+                
+                // Highlight relevant links
+                link.filter(l => 
+                    (l.source.id === selectedNode.id || l.source === selectedNode.id) || 
+                    (l.target.id === selectedNode.id || l.target === selectedNode.id)
+                ).attr("opacity", 1);
+            }
+            
+            // Button functionality
+            document.getElementById('btn-center').addEventListener('click', () => {
+                // Reset the zoom
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity,
+                    d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+                );
+            });
+            
+            document.getElementById('btn-spread').addEventListener('click', () => {
+                // Increase repulsion force
+                simulation
+                    .force("charge", d3.forceManyBody().strength(-500))
+                    .alpha(1)
+                    .restart();
+            });
+            
+            document.getElementById('btn-group').addEventListener('click', () => {
+                // Group nodes more strongly by field
+                simulation
+                    .force("x", d3.forceX(d => {
+                        if (d.group === 1) return width * 0.2;
+                        if (d.group === 2) return width * 0.5;
+                        return width * 0.8;
+                    }).strength(0.3))
+                    .alpha(1)
+                    .restart();
+            });
+            
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                // Reset the simulation
+                data.nodes.forEach(d => {
+                    d.fx = null;
+                    d.fy = null;
+                });
+                
+                simulation
+                    .force("charge", d3.forceManyBody().strength(-300))
+                    .force("x", d3.forceX(width / 2).strength(0.1))
+                    .force("y", d3.forceY(height / 2).strength(0.1))
+                    .alpha(1)
+                    .restart();
+                
+                // Reset zoom
+                svg.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                );
+                
+                // Reset node highlighting
+                node.selectAll("circle")
+                    .attr("r", nodeRadius)
+                    .attr("opacity", 1)
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 1.5);
+                
+                link.attr("opacity", 0.6);
+            });
+            
+            // Toggle labels
+            let labelsVisible = true;
+            document.getElementById('btn-toggle-labels').addEventListener('click', () => {
+                labelsVisible = !labelsVisible;
+                labels.attr("opacity", labelsVisible ? 1 : 0);
+            });
+            
+            // Initial layout improvement - run the simulation a bit
+            for (let i = 0; i < 300; ++i) simulation.tick();
+            
+            // Append the SVG to the container
+            return svg.node();
+        }
+        
+        // Create and mount the visualization
+        const svgElement = createVisualization();
+        document.getElementById('graph-svg-container').appendChild(svgElement);
+    </script>
+</body>
+</html>
