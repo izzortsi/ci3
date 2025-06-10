@@ -4,12 +4,25 @@
     "doShowAttachments": false
   },
   "groups": {
-    "groups": []
+    "groups": [
+      {
+        "query": "df",
+        "color": "#f0b514"
+      },
+      {
+        "query": "mc",
+        "color": "#0f31db"
+      },
+      {
+        "query": "mt",
+        "color": "#db0f0f"
+      }
+    ]
   },
   "display": {
-    "nodeSize": 4,
-    "linkThickness": 3,
-    "particleSize": 3,
-    "particleCount": 8
+    "nodeSize": 2,
+    "linkThickness": 1,
+    "particleSize": 1,
+    "particleCount": 1
   }
 }

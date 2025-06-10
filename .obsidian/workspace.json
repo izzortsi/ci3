@@ -1,20 +1,20 @@
 {
   "main": {
-    "id": "20f36ea098b7af44",
+    "id": "796575f3d2a1a459",
     "type": "split",
     "children": [
       {
-        "id": "7bf1c6df5f92343c",
+        "id": "577e1fa45616395c",
         "type": "tabs",
         "children": [
           {
-            "id": "c12ed0fefca8c57b",
+            "id": "51193059493aff87",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -23,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "7c74af73737d4ba4",
+    "id": "87d92a71e6dd635a",
     "type": "split",
     "children": [
       {
-        "id": "b36028efe2a8dc98",
+        "id": "e62ff04f86733b94",
         "type": "tabs",
         "children": [
           {
-            "id": "b93bf3c0685effbd",
+            "id": "796bf60d7400a3bb",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -44,7 +44,7 @@
             }
           },
           {
-            "id": "decd91dfebd2b287",
+            "id": "2f0a9b0cfa9bfaf4",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -61,7 +61,7 @@
             }
           },
           {
-            "id": "6a28f68dcb41c9c4",
+            "id": "32f297956de72e26",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -74,22 +74,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 584.5
+    "width": 300
   },
   "right": {
-    "id": "8dd0a833e94fb969",
+    "id": "2ceccdf43f7131a6",
     "type": "split",
     "children": [
       {
-        "id": "b688fd158ff444ab",
+        "id": "a6c14e5b3f6fd096",
         "type": "tabs",
         "children": [
           {
-            "id": "3255194d335f135d",
+            "id": "f34f939d15e5f645",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "locus ops.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,24 +100,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for locus ops"
             }
           },
           {
-            "id": "6d55765e14ec5f92",
+            "id": "4f813880f71f68b4",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "locus ops.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from locus ops"
             }
           },
           {
-            "id": "a2f3ca3bff3093ab",
+            "id": "3b9c04163e9c6c77",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -131,21 +133,22 @@
             }
           },
           {
-            "id": "4789a589936be232",
+            "id": "5c05a6e701c200e7",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "locus ops.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of locus ops"
             }
           },
           {
-            "id": "08f75ed367bab9fc",
+            "id": "89c30f4d9eaf679f",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -155,7 +158,7 @@
             }
           },
           {
-            "id": "b2769cdb1342deb4",
+            "id": "00fdb6d2c9825807",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -165,7 +168,7 @@
             }
           },
           {
-            "id": "cc61c6d762a1cd47",
+            "id": "a1bf2a9e9f9bfa48",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -175,7 +178,7 @@
             }
           },
           {
-            "id": "ec34e695658e71f4",
+            "id": "1a450d32ab4bce73",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -185,7 +188,7 @@
             }
           },
           {
-            "id": "06e82abac1e1aaa0",
+            "id": "520fd1e463e380fb",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -195,57 +198,7 @@
             }
           },
           {
-            "id": "2c74b511b4970ef5",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
-            }
-          },
-          {
-            "id": "de04a39acea191a1",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
-            }
-          },
-          {
-            "id": "b0f8f9a9089b4fc0",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
-            }
-          },
-          {
-            "id": "a1e5b149ab87629c",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
-            }
-          },
-          {
-            "id": "03c00da2a0cec062",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
-            }
-          },
-          {
-            "id": "6058230d39da3ed3",
+            "id": "67413f808640b796",
             "type": "leaf",
             "state": {
               "type": "graph-analysis",
@@ -255,11 +208,12 @@
             }
           }
         ],
-        "currentTab": 14
+        "currentTab": 9
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -274,43 +228,26 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6058230d39da3ed3",
+  "active": "796bf60d7400a3bb",
   "lastOpenFiles": [
-    "mt/mt-charts-atlases.md",
-    "Untitled",
-    "Ink/Writing/2025.3.23 - 7.00am.writing",
-    "exercises/Untitled.md",
-    "Ink/Writing",
-    "Ink",
-    "exercises/1.md",
-    "exercises/Untitled.canvas",
-    "exercises",
-    "math-dependency-graph.html",
-    "manifold_graph.html",
-    "math-dependency-graph (2).html",
-    "mt/mt-continuity.md",
-    "mt/mt-homeomorphisms.md",
-    "mt/mt-immersions-embeddings.md",
-    "mc/mc-green-theorem.md",
-    "df/df-exterior-derivative.md",
-    "df/df-de-rham-cohomology.md",
-    "df/df-wedge-product.md",
-    "mt/mt-tangent-spaces.md",
-    "mc/mc-directional-derivatives.md",
-    "mc/mc-partial-derivatives.md",
-    "mc-chain-rule.md",
-    "mc/mc-chain-rule.md",
-    "df/df-k-forms.md",
-    "df/df-curvature.md",
-    "df/df-connections.md",
-    "df/df-lie-derivatives.md",
-    "df/df-generalized-stokes-theorem.md",
-    "df/df-integration-of-forms.md",
-    "df/df-hodge-star.md",
-    "df/df-pullbacks.md",
-    "df/df-1-forms.md",
-    "df/df-alternating-products.md",
-    "df",
-    "mt"
+    "graph-sketches/slight-better-maybe--question--.html",
+    "graph-sketches/simplest_graph-very sloppy.html",
+    "graph-sketches",
+    "New folder",
+    "ciii-useless stuff/why would anybody honestly bother about topological games right/topological_game_1.md",
+    "ciii-useless stuff/why would anybody honestly bother about topological games right",
+    "ciii-useless stuff/dont hold your self on just an itch/locus ops 1.md",
+    "ciii-useless stuff/dont hold your self on just an itch",
+    "ciii-useless stuff",
+    "why would anybody honestly bother about topological games right/topological_game_1.md",
+    "why would anybody honestly bother about topological games right",
+    "slight-better-maybe--question--.html",
+    "simplest_graph-very sloppy.html",
+    "simples_graph-very sloppy.html",
+    "dont hold your self on just an itch/locus ops 1.md",
+    "Untitled.md",
+    "Claude.md",
+    "locus ops 1.md",
+    "locus ops.md"
   ]
 }
